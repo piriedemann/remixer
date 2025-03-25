@@ -9,11 +9,16 @@ const REMIX_TYPES: { [key in RemixType]: string } = {
   casual: 'Tono Casual'
 }
 
-const REMIX_PROMPTS: { [key in RemixType]: string } = {
-  tweet: 'Convierte este texto en un tweet conciso y atractivo de máximo 280 caracteres:',
-  blog: 'Reformatea este texto en un párrafo de blog atractivo y fácil de leer:',
-  formal: 'Reescribe este texto en un tono formal y profesional:',
-  casual: 'Reescribe este texto en un tono casual y conversacional:'
+// Simulación local de remixes mientras no tengamos la API
+const mockRemix = (text: string, type: RemixType): string => {
+  const prefix = {
+    tweet: '🐦 ',
+    blog: '📝 ',
+    formal: '👔 ',
+    casual: '😊 '
+  }
+  
+  return `${prefix[type]}${text.slice(0, 100)}${text.length > 100 ? '...' : ''}\n\n(Versión de prueba - API no conectada)`
 }
 
 function App() {
@@ -27,26 +32,9 @@ function App() {
     setIsLoading(true)
     setError('')
     try {
-      // TODO: Reemplazar con tu endpoint de Claude
-      const response = await fetch('YOUR_CLAUDE_API_ENDPOINT', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_API_KEY' // Reemplazar con tu API key
-        },
-        body: JSON.stringify({
-          prompt: `${REMIX_PROMPTS[selectedType]}\n\n${inputText}`,
-          max_tokens: 500,
-          temperature: 0.7
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error('Error al comunicarse con la API')
-      }
-
-      const data = await response.json()
-      setOutputText(data.completion || data.choices?.[0]?.text || '')
+      // Simulación de delay para dar sensación de procesamiento
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setOutputText(mockRemix(inputText, selectedType))
     } catch (error) {
       console.error('Error:', error)
       setError('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.')
